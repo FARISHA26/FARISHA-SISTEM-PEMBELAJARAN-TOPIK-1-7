@@ -1,0 +1,2258 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Sistem Pembelajaran Automasi Topik 1–7</title>
+
+<style>
+:root{
+    --primary:#2563eb;
+    --secondary:#7c3aed;
+    --success:#16a34a;
+    --warning:#f59e0b;
+    --danger:#dc2626;
+    --bg:#f1f5f9;
+    --card:#ffffff;
+    --text:#1e293b;
+    --muted:#64748b;
+    --border:#e2e8f0;
+}
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:Arial, Helvetica, sans-serif;
+    background:var(--bg);
+    color:var(--text);
+}
+
+/* SIDEBAR */
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    bottom:0;
+    width:250px;
+    background:linear-gradient(180deg,#1e3a8a,#312e81);
+    color:white;
+    padding:20px;
+    overflow-y:auto;
+}
+
+.logo{
+    font-size:22px;
+    font-weight:bold;
+    margin-bottom:5px;
+}
+
+.logo-sub{
+    font-size:12px;
+    opacity:.75;
+    margin-bottom:30px;
+}
+
+.nav-btn{
+    width:100%;
+    padding:13px;
+    margin:5px 0;
+    border:0;
+    border-radius:10px;
+    background:transparent;
+    color:white;
+    text-align:left;
+    cursor:pointer;
+    font-size:14px;
+}
+
+.nav-btn:hover,
+.nav-btn.active{
+    background:rgba(255,255,255,.15);
+}
+
+.topic-list{
+    margin-top:15px;
+}
+
+.topic-btn{
+    width:100%;
+    padding:10px;
+    margin:3px 0;
+    border:0;
+    border-radius:8px;
+    color:white;
+    background:rgba(255,255,255,.06);
+    cursor:pointer;
+    text-align:left;
+    font-size:13px;
+}
+
+.topic-btn:hover{
+    background:rgba(255,255,255,.16);
+}
+
+/* MAIN */
+.main{
+    margin-left:250px;
+    min-height:100vh;
+}
+
+.topbar{
+    background:white;
+    padding:15px 25px;
+    border-bottom:1px solid var(--border);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    position:sticky;
+    top:0;
+    z-index:10;
+}
+
+.search{
+    flex:1;
+    max-width:600px;
+    padding:12px 16px;
+    border:1px solid var(--border);
+    border-radius:25px;
+    outline:none;
+}
+
+.container{
+    padding:25px;
+}
+
+/* CARDS */
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:18px;
+}
+
+.card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:15px;
+    padding:20px;
+    box-shadow:0 3px 12px rgba(0,0,0,.05);
+}
+
+.card h3{
+    margin-top:0;
+}
+
+.stat{
+    font-size:30px;
+    font-weight:bold;
+    color:var(--primary);
+}
+
+.muted{
+    color:var(--muted);
+}
+
+/* PROGRESS */
+.progress{
+    width:100%;
+    height:12px;
+    background:#e2e8f0;
+    border-radius:10px;
+    overflow:hidden;
+}
+
+.progress-bar{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,var(--primary),var(--secondary));
+    transition:.4s;
+}
+
+/* TOPIC */
+.topic-card{
+    cursor:pointer;
+    transition:.2s;
+}
+
+.topic-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 8px 25px rgba(0,0,0,.1);
+}
+
+.topic-number{
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    background:var(--primary);
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+    margin-bottom:15px;
+}
+
+/* BUTTON */
+.btn{
+    border:0;
+    padding:10px 15px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.btn-primary{
+    background:var(--primary);
+    color:white;
+}
+
+.btn-success{
+    background:var(--success);
+    color:white;
+}
+
+.btn-warning{
+    background:var(--warning);
+    color:white;
+}
+
+.btn-danger{
+    background:var(--danger);
+    color:white;
+}
+
+.btn-secondary{
+    background:#64748b;
+    color:white;
+}
+
+.btn-light{
+    background:#e2e8f0;
+    color:#1e293b;
+}
+
+.btn + .btn{
+    margin-left:5px;
+}
+
+/* MATERIAL */
+.material{
+    background:white;
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:18px;
+    margin-bottom:12px;
+}
+
+.material-header{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+}
+
+.badge{
+    display:inline-block;
+    padding:5px 9px;
+    border-radius:15px;
+    background:#dbeafe;
+    color:#1d4ed8;
+    font-size:12px;
+}
+
+/* MODAL */
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.55);
+    z-index:100;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+.modal-box{
+    background:white;
+    width:min(650px,100%);
+    max-height:90vh;
+    overflow:auto;
+    border-radius:15px;
+    padding:25px;
+}
+
+.form-group{
+    margin-bottom:15px;
+}
+
+.form-group label{
+    display:block;
+    margin-bottom:6px;
+    font-weight:bold;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select{
+    width:100%;
+    padding:11px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    font-family:inherit;
+}
+
+.form-group textarea{
+    min-height:120px;
+}
+
+/* QUIZ */
+.quiz-question{
+    background:white;
+    padding:20px;
+    margin-bottom:15px;
+    border-radius:12px;
+    border:1px solid var(--border);
+}
+
+.quiz-option{
+    display:block;
+    padding:10px;
+    margin:7px 0;
+    border:1px solid var(--border);
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.quiz-option:hover{
+    background:#eff6ff;
+}
+
+/* DARK MODE */
+body.dark{
+    --bg:#0f172a;
+    --card:#1e293b;
+    --text:#f8fafc;
+    --muted:#94a3b8;
+    --border:#334155;
+}
+
+body.dark .topbar,
+body.dark .modal-box,
+body.dark .material,
+body.dark .quiz-question{
+    background:#1e293b;
+}
+
+body.dark .search,
+body.dark input,
+body.dark textarea,
+body.dark select{
+    background:#0f172a;
+    color:white;
+}
+
+/* MOBILE */
+@media(max-width:800px){
+
+    .sidebar{
+        position:relative;
+        width:100%;
+        height:auto;
+    }
+
+    .main{
+        margin-left:0;
+    }
+
+    .topbar{
+        position:relative;
+        flex-wrap:wrap;
+    }
+
+    .container{
+        padding:15px;
+    }
+}
+
+/* PRINT */
+@media print{
+    .sidebar,
+    .topbar,
+    .no-print{
+        display:none !important;
+    }
+
+    .main{
+        margin:0;
+    }
+
+    .container{
+        padding:0;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+
+    <div class="logo">
+        📚 SISTEM PEMBELAJARAN
+    </div>
+
+    <div class="logo-sub">
+        Automasi Topik 1 – 7
+    </div>
+
+    <button class="nav-btn active" onclick="showPage('dashboard')">
+        🏠 Dashboard
+    </button>
+
+    <button class="nav-btn" onclick="showPage('bahan')">
+        📚 Semua Bahan
+    </button>
+
+    <button class="nav-btn" onclick="showPage('bookmark')">
+        ⭐ Bookmark
+    </button>
+
+    <button class="nav-btn" onclick="showPage('kuiz')">
+        📝 Kuiz
+    </button>
+
+    <button class="nav-btn" onclick="showPage('statistik')">
+        📊 Statistik
+    </button>
+
+    <button class="nav-btn" onclick="showPage('tetapan')">
+        ⚙️ Tetapan
+    </button>
+
+    <hr>
+
+    <b>TOPIK 1 – 7</b>
+
+    <div class="topic-list" id="sidebarTopics"></div>
+
+</aside>
+
+
+<!-- MAIN -->
+<main class="main">
+
+<header class="topbar">
+
+    <input
+        type="text"
+        id="searchInput"
+        class="search"
+        placeholder="🔎 Cari bahan, topik atau kata kunci..."
+        oninput="searchMaterials()"
+    >
+
+    <button class="btn btn-light" onclick="toggleDarkMode()">
+        🌙
+    </button>
+
+</header>
+
+
+<div class="container">
+
+    <!-- DASHBOARD -->
+    <section id="dashboardPage">
+
+        <h1>Dashboard Pembelajaran</h1>
+
+        <p class="muted">
+            Selamat datang ke Sistem Pembelajaran Automasi Topik 1–7.
+        </p>
+
+        <div class="grid">
+
+            <div class="card">
+                <div class="muted">Jumlah Topik</div>
+                <div class="stat" id="totalTopics">7</div>
+            </div>
+
+            <div class="card">
+                <div class="muted">Jumlah Bahan</div>
+                <div class="stat" id="totalMaterials">0</div>
+            </div>
+
+            <div class="card">
+                <div class="muted">Topik Selesai</div>
+                <div class="stat" id="completedTopics">0</div>
+            </div>
+
+            <div class="card">
+                <div class="muted">Bookmark</div>
+                <div class="stat" id="bookmarkCount">0</div>
+            </div>
+
+        </div>
+
+        <br>
+
+        <div class="card">
+
+            <h2>📈 Kemajuan Pembelajaran</h2>
+
+            <div class="progress">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+
+            <p id="progressText">
+                0% selesai
+            </p>
+
+        </div>
+
+        <br>
+
+        <h2>📚 Topik Pembelajaran</h2>
+
+        <div class="grid" id="topicGrid"></div>
+
+    </section>
+
+
+    <!-- BAHAN -->
+    <section id="bahanPage" style="display:none">
+
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+
+            <div>
+                <h1>📚 Semua Bahan</h1>
+                <p class="muted">
+                    Urus semua bahan pembelajaran.
+                </p>
+            </div>
+
+            <button class="btn btn-primary no-print"
+                    onclick="openMaterialModal()">
+                ➕ Tambah Bahan
+            </button>
+
+        </div>
+
+        <div class="card no-print">
+
+            <select id="filterTopic" onchange="renderMaterials()">
+
+                <option value="all">
+                    Semua Topik
+                </option>
+
+                <option value="1">Topik 1</option>
+                <option value="2">Topik 2</option>
+                <option value="3">Topik 3</option>
+                <option value="4">Topik 4</option>
+                <option value="5">Topik 5</option>
+                <option value="6">Topik 6</option>
+                <option value="7">Topik 7</option>
+
+            </select>
+
+        </div>
+
+        <div id="materialsContainer"></div>
+
+    </section>
+
+
+    <!-- BOOKMARK -->
+    <section id="bookmarkPage" style="display:none">
+
+        <h1>⭐ Bahan Bookmark</h1>
+
+        <p class="muted">
+            Bahan yang ditanda untuk rujukan cepat.
+        </p>
+
+        <div id="bookmarkContainer"></div>
+
+    </section>
+
+
+    <!-- KUIZ -->
+    <section id="kuizPage" style="display:none">
+
+        <h1>📝 Kuiz Automatik</h1>
+
+        <p class="muted">
+            Jawab soalan dan sistem akan mengira markah secara automatik.
+        </p>
+
+        <div id="quizContainer"></div>
+
+        <button class="btn btn-primary"
+                onclick="submitQuiz()">
+            Semak Jawapan
+        </button>
+
+        <div id="quizResult"></div>
+
+    </section>
+
+
+    <!-- STATISTIK -->
+    <section id="statistikPage" style="display:none">
+
+        <h1>📊 Statistik Pembelajaran</h1>
+
+        <div class="grid">
+
+            <div class="card">
+                <h3>Kemajuan</h3>
+                <div class="stat" id="statProgress">0%</div>
+            </div>
+
+            <div class="card">
+                <h3>Topik Selesai</h3>
+                <div class="stat" id="statCompleted">0/7</div>
+            </div>
+
+            <div class="card">
+                <h3>Bookmark</h3>
+                <div class="stat" id="statBookmark">0</div>
+            </div>
+
+            <div class="card">
+                <h3>Jumlah Bahan</h3>
+                <div class="stat" id="statMaterials">0</div>
+            </div>
+
+        </div>
+
+        <br>
+
+        <div class="card">
+
+            <h2>Status Setiap Topik</h2>
+
+            <div id="topicStatistics"></div>
+
+        </div>
+
+    </section>
+
+
+    <!-- TETAPAN -->
+    <section id="tetapanPage" style="display:none">
+
+        <h1>⚙️ Tetapan Sistem</h1>
+
+        <div class="grid">
+
+            <div class="card">
+
+                <h3>📤 Eksport Data</h3>
+
+                <p class="muted">
+                    Simpan semua bahan dan kemajuan sebagai fail JSON.
+                </p>
+
+                <button class="btn btn-primary"
+                        onclick="exportData()">
+                    Eksport Data
+                </button>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>📥 Import Data</h3>
+
+                <p class="muted">
+                    Masukkan semula data yang telah dieksport.
+                </p>
+
+                <input
+                    type="file"
+                    accept=".json"
+                    onchange="importData(event)"
+                >
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>🖨️ Cetak</h3>
+
+                <p class="muted">
+                    Cetak bahan atau laporan pembelajaran.
+                </p>
+
+                <button class="btn btn-success"
+                        onclick="window.print()">
+                    Cetak
+                </button>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>♻️ Reset</h3>
+
+                <p class="muted">
+                    Padam semua data sistem.
+                </p>
+
+                <button class="btn btn-danger"
+                        onclick="resetSystem()">
+                    Reset Sistem
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- TOPIC DETAIL -->
+    <section id="topicPage" style="display:none">
+
+        <button class="btn btn-light no-print"
+                onclick="showPage('dashboard')">
+            ← Kembali
+        </button>
+
+        <div id="topicDetail"></div>
+
+    </section>
+
+</div>
+</main>
+
+
+<!-- MATERIAL MODAL -->
+<div class="modal" id="materialModal">
+
+    <div class="modal-box">
+
+        <h2 id="modalTitle">
+            ➕ Tambah Bahan
+        </h2>
+
+        <input type="hidden" id="editId">
+
+        <div class="form-group">
+
+            <label>Topik</label>
+
+            <select id="materialTopic">
+
+                <option value="1">Topik 1</option>
+                <option value="2">Topik 2</option>
+                <option value="3">Topik 3</option>
+                <option value="4">Topik 4</option>
+                <option value="5">Topik 5</option>
+                <option value="6">Topik 6</option>
+                <option value="7">Topik 7</option>
+
+            </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>Tajuk Bahan</label>
+
+            <input
+                type="text"
+                id="materialTitle"
+                placeholder="Contoh: Pengenalan Konsep"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>Jenis Bahan</label>
+
+            <select id="materialType">
+
+                <option value="Nota">
+                    Nota
+                </option>
+
+                <option value="Artikel">
+                    Artikel
+                </option>
+
+                <option value="Video">
+                    Video
+                </option>
+
+                <option value="PDF">
+                    PDF
+                </option>
+
+                <option value="Pautan">
+                    Pautan
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>Penerangan / Kandungan</label>
+
+            <textarea
+                id="materialContent"
+                placeholder="Masukkan isi kandungan bahan..."
+            ></textarea>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>Pautan (jika ada)</label>
+
+            <input
+                type="url"
+                id="materialLink"
+                placeholder="https://..."
+            >
+
+        </div>
+
+
+        <div style="text-align:right">
+
+            <button
+                class="btn btn-light"
+                onclick="closeMaterialModal()">
+                Batal
+            </button>
+
+            <button
+                class="btn btn-primary"
+                onclick="saveMaterial()">
+                Simpan
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   DATA SISTEM
+   GANTIKAN TAJUK DAN KANDUNGAN DI SINI DENGAN BAHAN SEBENAR
+   DARIPADA TOPIK 1 – 7
+========================================================= */
+
+const defaultTopics = [
+
+    {
+        id:1,
+        title:"Topik 1",
+        description:"Kandungan utama Topik 1",
+        completed:false
+    },
+
+    {
+        id:2,
+        title:"Topik 2",
+        description:"Kandungan utama Topik 2",
+        completed:false
+    },
+
+    {
+        id:3,
+        title:"Topik 3",
+        description:"Kandungan utama Topik 3",
+        completed:false
+    },
+
+    {
+        id:4,
+        title:"Topik 4",
+        description:"Kandungan utama Topik 4",
+        completed:false
+    },
+
+    {
+        id:5,
+        title:"Topik 5",
+        description:"Kandungan utama Topik 5",
+        completed:false
+    },
+
+    {
+        id:6,
+        title:"Topik 6",
+        description:"Kandungan utama Topik 6",
+        completed:false
+    },
+
+    {
+        id:7,
+        title:"Topik 7",
+        description:"Kandungan utama Topik 7",
+        completed:false
+    }
+
+];
+
+
+/* CONTOH BAHAN */
+let materials = JSON.parse(
+    localStorage.getItem("materials")
+) || [
+
+    {
+        id:1,
+        topic:1,
+        title:"Pengenalan Topik 1",
+        type:"Nota",
+        content:"Masukkan kandungan sebenar Topik 1 di sini.",
+        link:"",
+        bookmark:false
+    },
+
+    {
+        id:2,
+        topic:2,
+        title:"Pengenalan Topik 2",
+        type:"Nota",
+        content:"Masukkan kandungan sebenar Topik 2 di sini.",
+        link:"",
+        bookmark:false
+    },
+
+    {
+        id:3,
+        topic:3,
+        title:"Pengenalan Topik 3",
+        type:"Nota",
+        content:"Masukkan kandungan sebenar Topik 3 di sini.",
+        link:"",
+        bookmark:false
+    }
+
+];
+
+
+let topics = JSON.parse(
+    localStorage.getItem("topics")
+) || defaultTopics;
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+function showPage(page){
+
+    const pages = [
+        "dashboard",
+        "bahan",
+        "bookmark",
+        "kuiz",
+        "statistik",
+        "tetapan",
+        "topic"
+    ];
+
+    pages.forEach(p=>{
+
+        const el = document.getElementById(
+            p + "Page"
+        );
+
+        if(el){
+            el.style.display = "none";
+        }
+
+    });
+
+
+    const target =
+        document.getElementById(page + "Page");
+
+    if(target){
+        target.style.display = "block";
+    }
+
+
+    if(page==="dashboard"){
+        updateDashboard();
+    }
+
+    if(page==="bahan"){
+        renderMaterials();
+    }
+
+    if(page==="bookmark"){
+        renderBookmarks();
+    }
+
+    if(page==="statistik"){
+        renderStatistics();
+    }
+
+    if(page==="kuiz"){
+        renderQuiz();
+    }
+
+}
+
+
+/* =========================================================
+   SIDEBAR TOPICS
+========================================================= */
+
+function renderSidebarTopics(){
+
+    const box =
+        document.getElementById("sidebarTopics");
+
+    box.innerHTML = "";
+
+    topics.forEach(topic=>{
+
+        const button =
+            document.createElement("button");
+
+        button.className = "topic-btn";
+
+        button.innerHTML =
+            `${topic.completed ? "✅" : "📘"} ${topic.title}`;
+
+        button.onclick = () =>
+            openTopic(topic.id);
+
+        box.appendChild(button);
+
+    });
+
+}
+
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
+
+function updateDashboard(){
+
+    document.getElementById(
+        "totalTopics"
+    ).textContent = topics.length;
+
+
+    document.getElementById(
+        "totalMaterials"
+    ).textContent = materials.length;
+
+
+    const completed =
+        topics.filter(t=>t.completed).length;
+
+
+    document.getElementById(
+        "completedTopics"
+    ).textContent = completed;
+
+
+    const bookmarks =
+        materials.filter(m=>m.bookmark).length;
+
+
+    document.getElementById(
+        "bookmarkCount"
+    ).textContent = bookmarks;
+
+
+    const progress =
+        Math.round(
+            (completed / topics.length) * 100
+        );
+
+
+    document.getElementById(
+        "progressBar"
+    ).style.width = progress + "%";
+
+
+    document.getElementById(
+        "progressText"
+    ).textContent =
+        progress + "% selesai";
+
+
+    renderTopicCards();
+
+}
+
+
+/* =========================================================
+   TOPIC CARDS
+========================================================= */
+
+function renderTopicCards(){
+
+    const grid =
+        document.getElementById("topicGrid");
+
+    grid.innerHTML = "";
+
+    topics.forEach(topic=>{
+
+        const count =
+            materials.filter(
+                m=>m.topic===topic.id
+            ).length;
+
+
+        grid.innerHTML += `
+
+        <div class="card topic-card"
+             onclick="openTopic(${topic.id})">
+
+            <div class="topic-number">
+                ${topic.id}
+            </div>
+
+            <h3>
+                ${topic.title}
+            </h3>
+
+            <p class="muted">
+                ${topic.description}
+            </p>
+
+            <span class="badge">
+                ${count} bahan
+            </span>
+
+            <br><br>
+
+            <button
+                class="btn ${
+                    topic.completed
+                    ? "btn-success"
+                    : "btn-light"
+                }"
+                onclick="event.stopPropagation();
+                         toggleTopic(${topic.id})">
+
+                ${
+                    topic.completed
+                    ? "✓ Selesai"
+                    : "Tandakan Selesai"
+                }
+
+            </button>
+
+        </div>
+
+        `;
+
+    });
+
+}
+
+
+/* =========================================================
+   OPEN TOPIC
+========================================================= */
+
+function openTopic(id){
+
+    const topic =
+        topics.find(t=>t.id===id);
+
+    const topicMaterials =
+        materials.filter(m=>m.topic===id);
+
+
+    showPage("topic");
+
+
+    const box =
+        document.getElementById(
+            "topicDetail"
+        );
+
+
+    box.innerHTML = `
+
+        <h1>
+            📘 ${topic.title}
+        </h1>
+
+        <p class="muted">
+            ${topic.description}
+        </p>
+
+        <button
+            class="btn ${
+                topic.completed
+                ? "btn-success"
+                : "btn-primary"
+            }"
+            onclick="toggleTopic(${id})">
+
+            ${
+                topic.completed
+                ? "✓ Topik Selesai"
+                : "Tandakan Topik Selesai"
+            }
+
+        </button>
+
+        <hr>
+
+        <h2>
+            📚 Bahan Pembelajaran
+        </h2>
+
+        ${
+            topicMaterials.length
+            ?
+            topicMaterials.map(
+                materialHTML
+            ).join("")
+            :
+            `<div class="card">
+                Tiada bahan untuk topik ini.
+            </div>`
+        }
+
+    `;
+
+}
+
+
+/* =========================================================
+   MATERIAL HTML
+========================================================= */
+
+function materialHTML(m){
+
+    return `
+
+    <div class="material">
+
+        <div class="material-header">
+
+            <div>
+
+                <span class="badge">
+                    ${m.type}
+                </span>
+
+                <h3>
+                    ${m.title}
+                </h3>
+
+            </div>
+
+            <div>
+
+                <button
+                    class="btn btn-light"
+                    onclick="toggleBookmark(${m.id})">
+
+                    ${m.bookmark ? "⭐" : "☆"}
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <p>
+            ${m.content}
+        </p>
+
+        ${
+            m.link
+            ?
+            `<a href="${m.link}"
+                target="_blank"
+                class="btn btn-primary">
+                🔗 Buka Pautan
+             </a>`
+            :
+            ""
+        }
+
+        <div class="no-print" style="margin-top:10px">
+
+            <button
+                class="btn btn-warning"
+                onclick="editMaterial(${m.id})">
+                ✏️ Edit
+            </button>
+
+            <button
+                class="btn btn-danger"
+                onclick="deleteMaterial(${m.id})">
+                🗑️ Padam
+            </button>
+
+        </div>
+
+    </div>
+
+    `;
+
+}
+
+
+/* =========================================================
+   RENDER MATERIALS
+========================================================= */
+
+function renderMaterials(){
+
+    const box =
+        document.getElementById(
+            "materialsContainer"
+        );
+
+
+    const filter =
+        document.getElementById(
+            "filterTopic"
+        ).value;
+
+
+    let list = materials;
+
+
+    if(filter!=="all"){
+
+        list =
+            materials.filter(
+                m=>String(m.topic)===filter
+            );
+
+    }
+
+
+    if(!list.length){
+
+        box.innerHTML = `
+            <div class="card">
+                Tiada bahan dijumpai.
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    box.innerHTML =
+        list.map(materialHTML).join("");
+
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+function searchMaterials(){
+
+    const query =
+        document.getElementById(
+            "searchInput"
+        ).value
+        .toLowerCase();
+
+
+    const results =
+        materials.filter(m=>{
+
+            return (
+
+                m.title
+                    .toLowerCase()
+                    .includes(query)
+
+                ||
+
+                m.content
+                    .toLowerCase()
+                    .includes(query)
+
+                ||
+
+                String(m.topic)
+                    .includes(query)
+
+            );
+
+        });
+
+
+    const box =
+        document.getElementById(
+            "materialsContainer"
+        );
+
+
+    if(!results.length){
+
+        box.innerHTML = `
+            <div class="card">
+                Tiada hasil carian.
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    showPage("bahan");
+
+    box.innerHTML =
+        results.map(materialHTML).join("");
+
+}
+
+
+/* =========================================================
+   MATERIAL MODAL
+========================================================= */
+
+function openMaterialModal(){
+
+    document.getElementById(
+        "materialModal"
+    ).style.display = "flex";
+
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        "➕ Tambah Bahan";
+
+
+    document.getElementById(
+        "editId"
+    ).value = "";
+
+
+    document.getElementById(
+        "materialTitle"
+    ).value = "";
+
+
+    document.getElementById(
+        "materialContent"
+    ).value = "";
+
+
+    document.getElementById(
+        "materialLink"
+    ).value = "";
+
+}
+
+
+function closeMaterialModal(){
+
+    document.getElementById(
+        "materialModal"
+    ).style.display = "none";
+
+}
+
+
+/* =========================================================
+   SAVE MATERIAL
+========================================================= */
+
+function saveMaterial(){
+
+    const editId =
+        document.getElementById(
+            "editId"
+        ).value;
+
+
+    const data = {
+
+        topic:parseInt(
+            document.getElementById(
+                "materialTopic"
+            ).value
+        ),
+
+        title:
+            document.getElementById(
+                "materialTitle"
+            ).value,
+
+        type:
+            document.getElementById(
+                "materialType"
+            ).value,
+
+        content:
+            document.getElementById(
+                "materialContent"
+            ).value,
+
+        link:
+            document.getElementById(
+                "materialLink"
+            ).value
+
+    };
+
+
+    if(!data.title){
+
+        alert(
+            "Sila masukkan tajuk bahan."
+        );
+
+        return;
+
+    }
+
+
+    if(editId){
+
+        const index =
+            materials.findIndex(
+                m=>m.id==editId
+            );
+
+
+        materials[index] = {
+
+            ...materials[index],
+            ...data
+
+        };
+
+    }else{
+
+        materials.push({
+
+            id:Date.now(),
+
+            ...data,
+
+            bookmark:false
+
+        });
+
+    }
+
+
+    saveData();
+
+    closeMaterialModal();
+
+    renderMaterials();
+
+    updateDashboard();
+
+}
+
+
+/* =========================================================
+   EDIT
+========================================================= */
+
+function editMaterial(id){
+
+    const m =
+        materials.find(
+            x=>x.id===id
+        );
+
+
+    document.getElementById(
+        "materialModal"
+    ).style.display = "flex";
+
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        "✏️ Edit Bahan";
+
+
+    document.getElementById(
+        "editId"
+    ).value = m.id;
+
+
+    document.getElementById(
+        "materialTopic"
+    ).value = m.topic;
+
+
+    document.getElementById(
+        "materialTitle"
+    ).value = m.title;
+
+
+    document.getElementById(
+        "materialType"
+    ).value = m.type;
+
+
+    document.getElementById(
+        "materialContent"
+    ).value = m.content;
+
+
+    document.getElementById(
+        "materialLink"
+    ).value = m.link || "";
+
+}
+
+
+/* =========================================================
+   DELETE
+========================================================= */
+
+function deleteMaterial(id){
+
+    if(!confirm(
+        "Adakah anda pasti mahu padam bahan ini?"
+    )){
+        return;
+    }
+
+
+    materials =
+        materials.filter(
+            m=>m.id!==id
+        );
+
+
+    saveData();
+
+    renderMaterials();
+
+    updateDashboard();
+
+}
+
+
+/* =========================================================
+   BOOKMARK
+========================================================= */
+
+function toggleBookmark(id){
+
+    const m =
+        materials.find(
+            x=>x.id===id
+        );
+
+
+    if(m){
+
+        m.bookmark =
+            !m.bookmark;
+
+    }
+
+
+    saveData();
+
+    renderMaterials();
+
+    renderBookmarks();
+
+    updateDashboard();
+
+}
+
+
+function renderBookmarks(){
+
+    const box =
+        document.getElementById(
+            "bookmarkContainer"
+        );
+
+
+    const list =
+        materials.filter(
+            m=>m.bookmark
+        );
+
+
+    if(!list.length){
+
+        box.innerHTML = `
+            <div class="card">
+                Tiada bahan bookmark.
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    box.innerHTML =
+        list.map(materialHTML).join("");
+
+}
+
+
+/* =========================================================
+   TOPIC COMPLETE
+========================================================= */
+
+function toggleTopic(id){
+
+    const topic =
+        topics.find(
+            t=>t.id===id
+        );
+
+
+    if(topic){
+
+        topic.completed =
+            !topic.completed;
+
+    }
+
+
+    saveData();
+
+    updateDashboard();
+
+    renderSidebarTopics();
+
+    if(
+        document.getElementById(
+            "topicPage"
+        ).style.display !== "none"
+    ){
+
+        openTopic(id);
+
+    }
+
+}
+
+
+/* =========================================================
+   STATISTICS
+========================================================= */
+
+function renderStatistics(){
+
+    const completed =
+        topics.filter(
+            t=>t.completed
+        ).length;
+
+
+    const progress =
+        Math.round(
+            completed /
+            topics.length *
+            100
+        );
+
+
+    document.getElementById(
+        "statProgress"
+    ).textContent =
+        progress + "%";
+
+
+    document.getElementById(
+        "statCompleted"
+    ).textContent =
+        completed + "/" + topics.length;
+
+
+    document.getElementById(
+        "statBookmark"
+    ).textContent =
+        materials.filter(
+            m=>m.bookmark
+        ).length;
+
+
+    document.getElementById(
+        "statMaterials"
+    ).textContent =
+        materials.length;
+
+
+    const box =
+        document.getElementById(
+            "topicStatistics"
+        );
+
+
+    box.innerHTML = topics.map(t=>{
+
+        const count =
+            materials.filter(
+                m=>m.topic===t.id
+            ).length;
+
+
+        return `
+
+        <div class="card">
+
+            <b>
+                ${t.title}
+            </b>
+
+            <p class="muted">
+                ${count} bahan
+            </p>
+
+            <span class="badge">
+
+                ${
+                    t.completed
+                    ? "✓ Selesai"
+                    : "Belum selesai"
+                }
+
+            </span>
+
+        </div>
+
+        `;
+
+    }).join("");
+
+}
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+const quizQuestions = [
+
+    {
+        question:
+        "Apakah tujuan utama sistem pembelajaran ini?",
+
+        options:[
+            "Mengurus bahan pembelajaran",
+            "Menghapuskan pembelajaran",
+            "Menggantikan guru",
+            "Mengurangkan bahan"
+        ],
+
+        answer:0
+    },
+
+
+    {
+        question:
+        "Berapa topik utama dalam sistem?",
+
+        options:[
+            "3",
+            "5",
+            "7",
+            "10"
+        ],
+
+        answer:2
+    },
+
+
+    {
+        question:
+        "Apakah fungsi bookmark?",
+
+        options:[
+            "Memadam bahan",
+            "Menanda bahan untuk rujukan",
+            "Menutup sistem",
+            "Mengubah komputer"
+        ],
+
+        answer:1
+    },
+
+
+    {
+        question:
+        "Di manakah data tempatan sistem disimpan?",
+
+        options:[
+            "localStorage",
+            "Printer",
+            "Kalkulator",
+            "Keyboard"
+        ],
+
+        answer:0
+    }
+
+];
+
+
+function renderQuiz(){
+
+    const box =
+        document.getElementById(
+            "quizContainer"
+        );
+
+
+    box.innerHTML =
+        quizQuestions.map(
+            (q,index)=>`
+
+            <div class="quiz-question">
+
+                <h3>
+                    ${index+1}. ${q.question}
+                </h3>
+
+                ${
+                    q.options.map(
+                        (option,i)=>`
+
+                        <label class="quiz-option">
+
+                            <input
+                                type="radio"
+                                name="q${index}"
+                                value="${i}"
+                            >
+
+                            ${option}
+
+                        </label>
+
+                        `
+                    ).join("")
+                }
+
+            </div>
+
+            `
+        ).join("");
+
+
+    document.getElementById(
+        "quizResult"
+    ).innerHTML = "";
+
+}
+
+
+function submitQuiz(){
+
+    let score = 0;
+
+
+    quizQuestions.forEach(
+        (q,index)=>{
+
+            const selected =
+                document.querySelector(
+                    `input[name="q${index}"]:checked`
+                );
+
+
+            if(
+                selected &&
+                Number(selected.value)
+                === q.answer
+            ){
+
+                score++;
+
+            }
+
+        }
+    );
+
+
+    const percentage =
+        Math.round(
+            score /
+            quizQuestions.length *
+            100
+        );
+
+
+    document.getElementById(
+        "quizResult"
+    ).innerHTML = `
+
+        <div class="card">
+
+            <h2>
+                🎯 Keputusan Kuiz
+            </h2>
+
+            <div class="stat">
+                ${score}/${quizQuestions.length}
+            </div>
+
+            <p>
+                Markah: ${percentage}%
+            </p>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =========================================================
+   SAVE DATA
+========================================================= */
+
+function saveData(){
+
+    localStorage.setItem(
+        "materials",
+        JSON.stringify(materials)
+    );
+
+
+    localStorage.setItem(
+        "topics",
+        JSON.stringify(topics)
+    );
+
+}
+
+
+/* =========================================================
+   DARK MODE
+========================================================= */
+
+function toggleDarkMode(){
+
+    document.body.classList.toggle(
+        "dark"
+    );
+
+
+    localStorage.setItem(
+        "darkMode",
+        document.body.classList.contains(
+            "dark"
+        )
+    );
+
+}
+
+
+/* =========================================================
+   EXPORT
+========================================================= */
+
+function exportData(){
+
+    const data = {
+
+        topics:topics,
+
+        materials:materials,
+
+        exportedAt:
+            new Date().toISOString()
+
+    };
+
+
+    const blob =
+        new Blob(
+            [
+                JSON.stringify(
+                    data,
+                    null,
+                    2
+                )
+            ],
+            {
+                type:"application/json"
+            }
+        );
+
+
+    const url =
+        URL.createObjectURL(blob);
+
+
+    const a =
+        document.createElement("a");
+
+
+    a.href = url;
+
+    a.download =
+        "data_sistem_pembelajaran.json";
+
+
+    a.click();
+
+
+    URL.revokeObjectURL(url);
+
+}
+
+
+/* =========================================================
+   IMPORT
+========================================================= */
+
+function importData(event){
+
+    const file =
+        event.target.files[0];
+
+
+    if(!file){
+        return;
+    }
+
+
+    const reader =
+        new FileReader();
+
+
+    reader.onload = function(e){
+
+        try{
+
+            const data =
+                JSON.parse(
+                    e.target.result
+                );
+
+
+            if(data.topics){
+                topics =
+                    data.topics;
+            }
+
+
+            if(data.materials){
+                materials =
+                    data.materials;
+            }
+
+
+            saveData();
+
+            renderSidebarTopics();
+
+            updateDashboard();
+
+            alert(
+                "Data berjaya diimport."
+            );
+
+        }catch(error){
+
+            alert(
+                "Fail JSON tidak sah."
+            );
+
+        }
+
+    };
+
+
+    reader.readAsText(file);
+
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+function resetSystem(){
+
+    if(!confirm(
+        "Semua data akan dipadam. Teruskan?"
+    )){
+        return;
+    }
+
+
+    localStorage.clear();
+
+
+    location.reload();
+
+}
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+function initialize(){
+
+    if(
+        localStorage.getItem(
+            "darkMode"
+        ) === "true"
+    ){
+
+        document.body.classList.add(
+            "dark"
+        );
+
+    }
+
+
+    renderSidebarTopics();
+
+    updateDashboard();
+
+    renderMaterials();
+
+}
+
+
+initialize();
+
+</script>
+
+</body>
+</html>
